@@ -1,0 +1,11 @@
+[package]
+name = "aoc2021"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "aocmaxnoe2021"
+path = "src/lib.rs"
+
+[dependencies]
+reqwest = "0.9.18"
