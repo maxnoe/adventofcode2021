@@ -35,7 +35,7 @@ fn part2(numbers: &Vec<i32>) -> i32 {
         iter.next().expect(""),
         iter.next().expect("")
     ]);
-    let mut previous_sum: i32 = deq.iter().map(|x| *x).sum();
+    let mut previous_sum: i32 = deq.iter().copied().sum();
     let mut current_sum: i32;
 
 
@@ -43,7 +43,7 @@ fn part2(numbers: &Vec<i32>) -> i32 {
         deq.pop_front();
         deq.push_back(number);
 
-        current_sum = deq.iter().map(|x| *x).sum();
+        current_sum = deq.iter().copied().sum();
 
         if current_sum > previous_sum {
             n_larger += 1;
