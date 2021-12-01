@@ -1,8 +1,5 @@
+mod day1;
+pub use day1::day1;
+
 mod input;
-
 pub use input::get_input;
-
-
-pub fn hello() {
-    println!("Hello, Advent of Code!");
-}
