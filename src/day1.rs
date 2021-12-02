@@ -31,7 +31,7 @@ fn part2(numbers: &Vec<i32>) -> i32 {
 
     let mut previous_sum: i32 = numbers[0..window].iter().sum();
 
-    for i in 1..(numbers.len() - window + 1) {
+    for i in 1..=(numbers.len() - window) {
         current_sum = numbers[i..i+window].iter().sum();
 
         if current_sum > previous_sum {
