@@ -1,6 +1,4 @@
 use crate::input;
-use std::collections::VecDeque;
-
 
 fn parse_input(input: &String) -> Vec<i32> {
     input
@@ -28,29 +26,19 @@ fn part1(numbers: &Vec<i32>) -> i32 {
 
 fn part2(numbers: &Vec<i32>) -> i32 {
     let mut n_larger = 0;
-    let mut iter = numbers.iter();
-
-    let mut deq = VecDeque::from([
-        iter.next().expect(""),
-        iter.next().expect(""),
-        iter.next().expect("")
-    ]);
-    let mut previous_sum: i32 = deq.iter().copied().sum();
     let mut current_sum: i32;
+    let window = 3;
 
+    let mut previous_sum: i32 = numbers[0..window].iter().sum();
 
-    for number in iter {
-        deq.pop_front();
-        deq.push_back(number);
-
-        current_sum = deq.iter().copied().sum();
+    for i in 1..(numbers.len() - window + 1) {
+        current_sum = numbers[i..i+window].iter().sum();
 
         if current_sum > previous_sum {
             n_larger += 1;
         }
         previous_sum = current_sum;
     }
-    // deq.iter().sum();
 
     n_larger
 }
