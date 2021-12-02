@@ -3,8 +3,9 @@ use crate::input;
 fn parse_input(input: &String) -> Vec<i32> {
     input
         .trim()
-        .split_ascii_whitespace()
-        .map(|line: &str| line.parse::<i32>().expect("Failed to parse input"))
+        .lines()
+        .map(str::parse::<i32>)
+        .map(Result::unwrap)
         .collect()
 }
 

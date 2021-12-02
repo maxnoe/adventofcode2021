@@ -23,23 +23,30 @@ struct AimedPosition {
 }
 
 
+fn parse_line(line: &str) -> Result<Command, &str> {
+    let mut split = line.split(" ");
+
+    let direction = match split.next() {
+        Some("up") => Direction::Up,
+        Some("down") => Direction::Down,
+        Some("forward") => Direction::Forward,
+        _ => return Err("Unknown direction")
+    };
+    let amount: i32 = match split.next() {
+        Some(val) => val.parse().unwrap_or(0),
+        _ => return Err("Unknown amount")
+    };
+
+    Ok(Command{direction, amount})
+}
+
+
 fn parse_input(input: &String) -> Vec<Command> {
-    let mut commands = Vec::new();
-
-    for line in input.trim().split("\n") {
-        let mut split = line.split(" ");
-        let direction = match split.next().expect("Error parsing") {
-            "up" => Direction::Up,
-            "down" => Direction::Down,
-            "forward" => Direction::Forward,
-            _ => panic!("Unexpected direction")
-        };
-        let amount: i32 = split.next().expect("Error parsing").parse().expect("Error parsing");
-
-        commands.push(Command{direction, amount});
-    }
-
-    commands
+    input
+        .lines()
+        .map(parse_line)
+        .map(Result::unwrap)
+        .collect()
 }
 
 fn update_position(position: &mut Position, command: &Command) {
