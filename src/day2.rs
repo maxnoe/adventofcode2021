@@ -8,7 +8,7 @@ enum Direction {
 
 struct Command {
     direction: Direction,
-    amount: i32
+    amount: i32,
 }
 
 struct Position {
@@ -22,7 +22,6 @@ struct AimedPosition {
     aim: i32,
 }
 
-
 fn parse_line(line: &str) -> Result<Command, &str> {
     let mut split = line.split(" ");
 
@@ -30,23 +29,18 @@ fn parse_line(line: &str) -> Result<Command, &str> {
         Some("up") => Direction::Up,
         Some("down") => Direction::Down,
         Some("forward") => Direction::Forward,
-        _ => return Err("Unknown direction")
+        _ => return Err("Unknown direction"),
     };
     let amount: i32 = match split.next() {
         Some(val) => val.parse().unwrap_or(0),
-        _ => return Err("Unknown amount")
+        _ => return Err("Unknown amount"),
     };
 
-    Ok(Command{direction, amount})
+    Ok(Command { direction, amount })
 }
 
-
 fn parse_input(input: &String) -> Vec<Command> {
-    input
-        .lines()
-        .map(parse_line)
-        .map(Result::unwrap)
-        .collect()
+    input.lines().map(parse_line).map(Result::unwrap).collect()
 }
 
 fn update_position(position: &mut Position, command: &Command) {
@@ -56,7 +50,6 @@ fn update_position(position: &mut Position, command: &Command) {
         Direction::Forward => position.distance += command.amount,
     }
 }
-
 
 fn update_aimed_position(position: &mut AimedPosition, command: &Command) {
     match command.direction {
@@ -69,24 +62,28 @@ fn update_aimed_position(position: &mut AimedPosition, command: &Command) {
     }
 }
 
-
 fn part1(commands: &Vec<Command>) -> i32 {
-    let mut position = Position{depth: 0, distance: 0};
+    let mut position = Position {
+        depth: 0,
+        distance: 0,
+    };
     for command in commands {
         update_position(&mut position, &command);
     }
     position.depth * position.distance
 }
 
-
 fn part2(commands: &Vec<Command>) -> i32 {
-    let mut position = AimedPosition{depth: 0, distance: 0, aim: 0};
+    let mut position = AimedPosition {
+        depth: 0,
+        distance: 0,
+        aim: 0,
+    };
     for command in commands {
         update_aimed_position(&mut position, &command);
     }
     position.depth * position.distance
 }
-
 
 pub fn day2() {
     let input = input::get_input(2);

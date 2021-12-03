@@ -1,6 +1,5 @@
 use crate::input;
 
-
 #[cfg(test)]
 mod test {
     const TEST_INPUT: &str = "00100
@@ -16,7 +15,6 @@ mod test {
         00010
         01010";
 
-
     #[test]
     fn part1() {
         let (n_bits, numbers) = super::parse_input(&String::from(TEST_INPUT));
@@ -28,9 +26,7 @@ mod test {
         let (n_bits, numbers) = super::parse_input(&String::from(TEST_INPUT));
         assert_eq!(super::find_ozygen_rating(n_bits, &numbers), 23)
     }
-
 }
-
 
 fn parse_input(input: &String) -> (usize, Vec<u16>) {
     let numbers = input
@@ -77,14 +73,14 @@ fn part1(n_bits: usize, numbers: &Vec<u16>) -> u32 {
     gamma_rate as u32 * epsilon_rate as u32
 }
 
-
 fn find_ozygen_rating(n_bits: usize, numbers: &Vec<u16>) -> u16 {
     let mut numbers = numbers.clone();
 
     for bit in (0..n_bits).rev() {
         let most_common = most_common_bit(&numbers);
 
-        numbers = numbers.iter()
+        numbers = numbers
+            .iter()
             .filter(|number| (most_common[bit] << bit) == (*number & (1 << bit)))
             .copied()
             .collect();
@@ -97,14 +93,14 @@ fn find_ozygen_rating(n_bits: usize, numbers: &Vec<u16>) -> u16 {
     panic!("Did not find rating");
 }
 
-
 fn find_carbon_rating(n_bits: usize, numbers: &Vec<u16>) -> u16 {
     let mut numbers = numbers.clone();
 
     for bit in (0..n_bits).rev() {
         let most_common = most_common_bit(&numbers);
 
-        numbers = numbers.iter()
+        numbers = numbers
+            .iter()
             .filter(|number| (most_common[bit] << bit) != (*number & (1 << bit)))
             .copied()
             .collect();
@@ -120,7 +116,6 @@ fn find_carbon_rating(n_bits: usize, numbers: &Vec<u16>) -> u16 {
 fn part2(n_bits: usize, numbers: &Vec<u16>) -> i64 {
     find_carbon_rating(n_bits, &numbers) as i64 * find_ozygen_rating(n_bits, &numbers) as i64
 }
-
 
 pub fn day3() {
     let input = input::get_input(3);

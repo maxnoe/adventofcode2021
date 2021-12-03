@@ -24,7 +24,6 @@ fn part1(numbers: &Vec<i32>) -> i32 {
     n_larger
 }
 
-
 fn part2(numbers: &Vec<i32>) -> i32 {
     let mut n_larger = 0;
     let mut current_sum: i32;
@@ -33,7 +32,7 @@ fn part2(numbers: &Vec<i32>) -> i32 {
     let mut previous_sum: i32 = numbers[0..window].iter().sum();
 
     for i in 1..=(numbers.len() - window) {
-        current_sum = numbers[i..i+window].iter().sum();
+        current_sum = numbers[i..i + window].iter().sum();
 
         if current_sum > previous_sum {
             n_larger += 1;
@@ -43,7 +42,6 @@ fn part2(numbers: &Vec<i32>) -> i32 {
 
     n_larger
 }
-
 
 pub fn day1() {
     let input = input::get_input(1);
