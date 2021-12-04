@@ -7,5 +7,8 @@ pub use day2::day2;
 mod day3;
 pub use day3::day3;
 
+mod day4;
+pub use day4::day4;
+
 mod input;
 pub use input::get_input;
