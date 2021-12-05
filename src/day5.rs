@@ -1,25 +1,19 @@
 use crate::input;
+use std::cmp::{max, min};
 use std::collections::HashMap;
 use std::time::Instant;
-use std::cmp::{min, max};
 
-
-#[derive(Debug)]
-#[derive(Hash, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
 struct Point {
     x: u16,
     y: u16,
 }
-
-
 
 #[derive(Debug)]
 struct Line {
     p0: Point,
     p1: Point,
 }
-
-
 
 impl Line {
     pub fn is_horizontal(&self) -> bool {
@@ -39,36 +33,30 @@ impl Line {
     }
 }
 
-
 fn parse_point(point: &str) -> Point {
     let mut iter = point.split(",");
     let x: u16 = iter.next().unwrap().parse().unwrap();
     let y: u16 = iter.next().unwrap().parse().unwrap();
 
-    Point{x, y}
+    Point { x, y }
 }
 
-
 fn parse_line(line: &str) -> Line {
-    let points: Vec<Point> = line.split(" -> ")
-        .map(parse_point)
-        .collect();
+    let points: Vec<Point> = line.split(" -> ").map(parse_point).collect();
 
     if points.len() != 2 {
         panic!("Did not find 2 lines");
     }
 
-    Line{p0: points[0], p1: points[1]}
+    Line {
+        p0: points[0],
+        p1: points[1],
+    }
 }
-
 
 fn parse_input(input: &String) -> Vec<Line> {
-    input
-        .lines()
-        .map(parse_line)
-        .collect()
+    input.lines().map(parse_line).collect()
 }
-
 
 fn add_vents(vents: &mut HashMap<Point, u16>, line: &Line) {
     if line.is_horizontal() {
@@ -77,10 +65,12 @@ fn add_vents(vents: &mut HashMap<Point, u16>, line: &Line) {
         let end = max(line.p0.x, line.p1.x);
 
         for x in start..=end {
-            let point = Point{x, y};
+            let point = Point { x, y };
             match vents.get_mut(&point) {
-                Some(val) => {*val += 1},
-                None => {vents.insert(point, 1);},
+                Some(val) => *val += 1,
+                None => {
+                    vents.insert(point, 1);
+                }
             }
         }
     } else if line.is_vertical() {
@@ -89,10 +79,12 @@ fn add_vents(vents: &mut HashMap<Point, u16>, line: &Line) {
         let end = max(line.p0.y, line.p1.y);
 
         for y in start..=end {
-            let point = Point{x, y};
+            let point = Point { x, y };
             match vents.get_mut(&point) {
-                Some(val) => {*val += 1},
-                None => {vents.insert(point, 1);},
+                Some(val) => *val += 1,
+                None => {
+                    vents.insert(point, 1);
+                }
             }
         }
     }
@@ -107,49 +99,45 @@ fn add_vents_diagonal(vents: &mut HashMap<Point, u16>, line: &Line) {
         let delta_y = delta_y.signum();
 
         for i in 0..=n {
-            let point = Point{
+            let point = Point {
                 x: (line.p0.x as i32 + i * delta_x) as u16,
                 y: (line.p0.y as i32 + i * delta_y) as u16,
             };
             match vents.get_mut(&point) {
-                Some(val) => {*val += 1},
-                None => {vents.insert(point, 1);},
+                Some(val) => *val += 1,
+                None => {
+                    vents.insert(point, 1);
+                }
             }
         }
     }
 }
 
-
 fn count_at_least_2(vents: &HashMap<Point, u16>) -> u32 {
-    vents.iter()
-        .map(|(_, v)| *v)
-        .filter(|v| *v >= 2)
-        .count() as u32
+    vents.iter().map(|(_, v)| *v).filter(|v| *v >= 2).count() as u32
 }
-
 
 fn part1(lines: &Vec<Line>) -> u32 {
     let mut vents: HashMap<Point, u16> = HashMap::new();
 
-    lines.iter()
+    lines
+        .iter()
         .filter(|l| l.is_axis_parallel())
         .for_each(|l| add_vents(&mut vents, l));
-    
+
     count_at_least_2(&vents)
 }
 
 fn part2(lines: &Vec<Line>) -> u32 {
     let mut vents: HashMap<Point, u16> = HashMap::new();
 
-    lines.iter()
-        .for_each(|l| {
-            add_vents(&mut vents, l);
-            add_vents_diagonal(&mut vents, l);
-        });
-    
+    lines.iter().for_each(|l| {
+        add_vents(&mut vents, l);
+        add_vents_diagonal(&mut vents, l);
+    });
+
     count_at_least_2(&vents)
 }
-
 
 pub fn day5() {
     let input = input::get_input(5);

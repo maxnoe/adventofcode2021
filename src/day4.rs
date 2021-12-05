@@ -2,9 +2,7 @@ use crate::input;
 use std::collections::VecDeque;
 use std::time::Instant;
 
-
-#[derive(Debug)]
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 struct Board {
     numbers: [[u8; 5]; 5],
     marked: [[bool; 5]; 5],
@@ -12,7 +10,7 @@ struct Board {
 
 impl Board {
     pub fn new() -> Self {
-        Self{
+        Self {
             numbers: [[0u8; 5]; 5],
             marked: [[false; 5]; 5],
         }
@@ -55,8 +53,8 @@ impl Board {
                 Some(n) => {
                     self.marked[row][n] = true;
                     return true;
-                },
-                None => {},
+                }
+                None => {}
             }
         }
 
@@ -79,19 +77,18 @@ fn parse_input(input: &String) -> (Vec<u8>, Vec<Board>) {
 
     for group in groups {
         let mut board = Board::new();
-        group.split_ascii_whitespace()
+        group
+            .split_ascii_whitespace()
             .map(str::parse::<u8>)
             .map(Result::unwrap)
             .enumerate()
-            .for_each(|el: (usize, u8)| board.numbers[el.0 / 5][el.0 % 5] = el.1)
-        ;
+            .for_each(|el: (usize, u8)| board.numbers[el.0 / 5][el.0 % 5] = el.1);
 
         boards.push(board);
     }
-    
+
     (numbers, boards)
 }
-
 
 fn part1(numbers: &Vec<u8>, boards: &Vec<Board>) -> u32 {
     let mut boards = boards.clone();
@@ -107,7 +104,6 @@ fn part1(numbers: &Vec<u8>, boards: &Vec<Board>) -> u32 {
     }
     0
 }
-
 
 fn part2(numbers: &Vec<u8>, boards: &Vec<Board>) -> u32 {
     let mut boards: VecDeque<Board> = boards.iter().copied().collect();
@@ -126,7 +122,6 @@ fn part2(numbers: &Vec<u8>, boards: &Vec<Board>) -> u32 {
     }
     0
 }
-
 
 pub fn day4() {
     let input = input::get_input(4);
