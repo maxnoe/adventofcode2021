@@ -87,11 +87,7 @@ fn add_vents(vents: &mut HashMap<Point, u16>, line: &Line) {
                 }
             }
         }
-    }
-}
-
-fn add_vents_diagonal(vents: &mut HashMap<Point, u16>, line: &Line) {
-    if line.is_diagonal() {
+    } else if line.is_diagonal() {
         let delta_x: i32 = line.p1.x as i32 - line.p0.x as i32;
         let delta_y: i32 = line.p1.y as i32 - line.p0.y as i32;
         let n = delta_x.abs();
@@ -114,7 +110,7 @@ fn add_vents_diagonal(vents: &mut HashMap<Point, u16>, line: &Line) {
 }
 
 fn count_at_least_2(vents: &HashMap<Point, u16>) -> u32 {
-    vents.iter().map(|(_, v)| *v).filter(|v| *v >= 2).count() as u32
+    vents.values().filter(|v| **v >= 2).count() as u32
 }
 
 fn part1(lines: &Vec<Line>) -> u32 {
@@ -130,12 +126,9 @@ fn part1(lines: &Vec<Line>) -> u32 {
 
 fn part2(lines: &Vec<Line>) -> u32 {
     let mut vents: HashMap<Point, u16> = HashMap::new();
-
-    lines.iter().for_each(|l| {
-        add_vents(&mut vents, l);
-        add_vents_diagonal(&mut vents, l);
-    });
-
+    for line in lines {
+        add_vents(&mut vents, line);
+    }
     count_at_least_2(&vents)
 }
 
