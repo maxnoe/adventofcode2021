@@ -1,6 +1,6 @@
 [package]
 name = "aoc2021"
-version = "0.7.1"
+version = "0.8.1"
 edition = "2021"
 
 [lib]
@@ -9,3 +9,4 @@ path = "src/lib.rs"
 
 [dependencies]
 reqwest = "0.9.18"
+itertools = "0.10.3"
