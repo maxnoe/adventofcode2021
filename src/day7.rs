@@ -1,5 +1,6 @@
 use crate::input;
 use std::time::Instant;
+use std::cmp::min;
 
 
 fn parse_input(input: &String) -> Vec<i32> {
@@ -15,6 +16,11 @@ fn median(numbers: &Vec<i32>) -> i32 {
     let mut numbers = numbers.clone();
     numbers.sort();
     numbers[numbers.len() / 2]
+}
+
+fn mean(numbers: &Vec<i32>) -> i32 {
+    let sum: f64 = numbers.iter().map(|n| *n as f64).sum();
+    (sum / numbers.len() as f64) as i32
 }
 
 fn part1(positions: &Vec<i32>) -> i32 {
@@ -39,20 +45,11 @@ fn total_fuel_consumption(positions: &Vec<i32>, target_position: i32) -> i32 {
 }
 
 fn part2(positions: &Vec<i32>) -> i32 {
-    let start = positions.iter().min().copied().unwrap_or(0);
-    let end = positions.iter().max().copied().unwrap_or(0);
-
-    let mut best_fuel = i32::max_value();
-    for pos in start..=end {
-        let fuel = total_fuel_consumption(&positions, pos);
-        if fuel < best_fuel {
-            best_fuel = fuel;
-        }
-
-    }
-
-    best_fuel
-
+    let pos1 = mean(&positions);
+    let fuel1 = total_fuel_consumption(positions, pos1);
+    let fuel2 = total_fuel_consumption(positions, pos1 + 1);
+    println!("{} {}", fuel1, fuel2);
+    min(fuel1, fuel2)
 }
 
 pub fn day7() {
