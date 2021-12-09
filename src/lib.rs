@@ -22,5 +22,8 @@ pub use day7::day7;
 mod day8;
 pub use day8::day8;
 
+mod day9;
+pub use day9::day9;
+
 mod input;
 pub use input::get_input;
