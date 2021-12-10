@@ -10,3 +10,4 @@ path = "src/lib.rs"
 [dependencies]
 reqwest = "0.9.18"
 itertools = "0.10.3"
+phf = { version = "0.9", features = ["macros"] }
