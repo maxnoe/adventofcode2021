@@ -66,7 +66,7 @@ fn basin_size(row: usize, col: usize, grid: &Vec<Vec<u8>>, visited: &mut Vec<Vec
         .iter()
         .map(|(drow, dcol)| (row as i32 + drow, col as i32 + dcol))
         .filter(|(r, c)| (*r >= 0) && (*r < n_rows) && (*c >= 0) && (*c < n_cols) && !visited[*r as usize][*c as usize])
-        .for_each(|(r, c)| to_check.push_front((r as usize, c as usize)));
+        .for_each(|(r, c)| to_check.push_back((r as usize, c as usize)));
 
 
     while to_check.len() > 0 {
@@ -79,7 +79,7 @@ fn basin_size(row: usize, col: usize, grid: &Vec<Vec<u8>>, visited: &mut Vec<Vec
                 .iter()
                 .map(|(drow, dcol)| (r as i32 + drow, c as i32 + dcol))
                 .filter(|(r, c)| (*r >= 0) && (*r < n_rows) && (*c >= 0) && (*c < n_cols) && !visited[*r as usize][*c as usize])
-                .for_each(|(r, c)| to_check.push_front((r as usize, c as usize)));
+                .for_each(|(r, c)| to_check.push_back((r as usize, c as usize)));
         }
 
         visited[r][c] = true;
