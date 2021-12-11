@@ -74,7 +74,6 @@ fn completion_score(line: &String) -> i64 {
 
     let mut score = 0;
     stack.reverse();
-    println!("{} {}", line, stack.iter().map(|c| CLOSING_PAIR.get(c).unwrap_or(&'\0')).collect::<String>());
     for chr in stack {
         score *= 5;
         score += match chr {
