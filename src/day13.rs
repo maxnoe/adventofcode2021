@@ -44,24 +44,24 @@ fn parse_input(input: &String) -> Input {
 fn apply_fold(grid: &HashSet<(u32, u32)>, axis: &Axis, position: u32) -> HashSet<(u32, u32)>{
     let mut new_grid = HashSet::new();
 
-    for (row, col) in grid.iter().copied() {
+    for (x, y) in grid.iter().copied() {
         match axis {
             Axis::X => {
-                if row < position {
-                    new_grid.insert((row, col));
+                if x < position {
+                    new_grid.insert((x, y));
                 } else {
-                    let new_row = position - (row - position);
-                    // println!("Folding {} {} -> {} {}", row, col, new_row, col);
-                    new_grid.insert((new_row, col));
+                    let new_x = position - (x - position);
+                    // println!("Folding {} {} -> {} {}", x, y, new_x, y);
+                    new_grid.insert((new_x, y));
                 }
             },
             Axis::Y => {
-                if col < position {
-                    new_grid.insert((row, col));
+                if y < position {
+                    new_grid.insert((x, y));
                 } else {
-                    let new_col = position - (col - position);
-                    // println!("Folding {} {} -> {} {}", row, col, row, new_col);
-                    new_grid.insert((row, new_col));
+                    let new_y = position - (y - position);
+                    // println!("Folding {} {} -> {} {}", x, y, x, new_y);
+                    new_grid.insert((x, new_y));
                 }
             },
         }
@@ -83,12 +83,12 @@ fn part2(input: &Input) {
         grid = apply_fold(&mut grid, axis, *position);
     }
 
-    let n_rows = grid.iter().map(|(r, _)| *r).max().unwrap() + 1;
-    let n_cols = grid.iter().map(|(_, c)| *c).max().unwrap() + 1;
-    let mut display = vec![vec!['.'; n_rows as usize]; n_cols as usize];
+    let n_cols = grid.iter().map(|(x, _)| *x).max().unwrap() + 1;
+    let n_rows = grid.iter().map(|(_, y)| *y).max().unwrap() + 1;
+    let mut display = vec![vec!['.'; n_cols as usize]; n_rows as usize];
 
-    for (r, c) in grid {
-        display[c as usize][r as usize] = '#';
+    for (x, y) in grid {
+        display[y as usize][x as usize] = '#';
     }
 
     for row in display {
