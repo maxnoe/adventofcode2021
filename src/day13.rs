@@ -85,10 +85,10 @@ fn part2(input: &Input) {
 
     let n_cols = grid.iter().map(|(x, _)| *x).max().unwrap() + 1;
     let n_rows = grid.iter().map(|(_, y)| *y).max().unwrap() + 1;
-    let mut display = vec![vec!['.'; n_cols as usize]; n_rows as usize];
+    let mut display = vec![vec![' '; n_cols as usize]; n_rows as usize];
 
     for (x, y) in grid {
-        display[y as usize][x as usize] = '#';
+        display[y as usize][x as usize] = '▇';
     }
 
     for row in display {
