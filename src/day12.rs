@@ -25,8 +25,8 @@ fn is_ascii_lowercase(s: &str) -> bool {
 }
 
 
-fn find_paths(start_point: &String, connections: &Input, visited: &mut HashSet<String>) -> Vec<Vec<String>> {
-    let mut paths = Vec::new();
+fn find_paths(start_point: &String, connections: &Input, visited: &mut HashSet<String>) -> usize {
+    let mut n_paths = 0;
 
     if is_ascii_lowercase(&start_point) {
         visited.insert(start_point.clone());
@@ -37,22 +37,17 @@ fn find_paths(start_point: &String, connections: &Input, visited: &mut HashSet<S
         if visited.contains(cave) {
             continue;
         } else if cave == "end" {
-            paths.push(vec![start_point.clone(), String::from("end")]);
+            n_paths += 1;
         } else {
-            for p in find_paths(&cave, &connections, &mut visited.clone()) {
-                let mut path = Vec::new();
-                path.push(start_point.clone());
-                path.extend(p);
-                paths.push(path.clone());
-            }
+            n_paths += find_paths(&cave, &connections, &mut visited.clone());
         }
     }
-    paths
+    n_paths
 }
 
 
-fn find_paths_2(start_point: &String, connections: &Input, visited: &mut HashSet<String>, small_seen_twice: bool) -> Vec<Vec<String>> {
-    let mut paths = Vec::new();
+fn find_paths_2(start_point: &String, connections: &Input, visited: &mut HashSet<String>, small_seen_twice: bool) -> usize {
+    let mut n_paths = 0;
     let mut small_seen_twice = small_seen_twice;
 
     if is_ascii_lowercase(&start_point) {
@@ -68,27 +63,22 @@ fn find_paths_2(start_point: &String, connections: &Input, visited: &mut HashSet
         if (visited.contains(cave) && small_seen_twice) || cave == "start" {
             continue;
         } else if cave == "end" {
-            paths.push(vec![start_point.clone(), String::from("end")]);
+            n_paths += 1;
         } else {
-            for p in find_paths_2(&cave, &connections, &mut visited.clone(), small_seen_twice) {
-                let mut path = Vec::new();
-                path.push(start_point.clone());
-                path.extend(p);
-                paths.push(path.clone());
-            }
+            n_paths += find_paths_2(&cave, &connections, &mut visited.clone(), small_seen_twice);
         }
     }
-    paths
+    n_paths
 }
 
 
 
 fn part1(connections: &Input) -> usize {
-    find_paths(&String::from("start"), &connections, &mut HashSet::new()).len()
+    find_paths(&String::from("start"), &connections, &mut HashSet::new())
 }
 
 fn part2(connections: &Input) -> usize {
-    find_paths_2(&String::from("start"), &connections, &mut HashSet::new(), false).len()
+    find_paths_2(&String::from("start"), &connections, &mut HashSet::new(), false)
 }
 
 pub fn day12() {
