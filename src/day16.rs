@@ -20,9 +20,28 @@ struct Literal {
     value: u64,
 }
 
+impl Literal {
+    fn eval(&self) -> u64 {self.value}
+}
+
 struct Operator {
     header: Header,
     packets: Vec<Packet>
+}
+
+impl Operator {
+    fn eval(&self) -> u64 {
+        match self.header.type_id {
+            0 => self.packets.iter().map(|p| p.eval()).sum(),
+            1 => self.packets.iter().map(|p| p.eval()).product(),
+            2 => self.packets.iter().map(|p| p.eval()).min().unwrap(),
+            3 => self.packets.iter().map(|p| p.eval()).max().unwrap(),
+            5 => (self.packets[0].eval() > self.packets[1].eval()) as u64,
+            6 => (self.packets[0].eval() < self.packets[1].eval()) as u64,
+            7 => (self.packets[0].eval() == self.packets[1].eval()) as u64,
+            _ => panic!("Unexpected type {}", self.header.type_id)
+        }
+    }
 }
 
 enum Packet {
@@ -33,19 +52,8 @@ enum Packet {
 impl Packet {
     fn eval(&self) -> u64 {
         match self {
-            Packet::Literal(lit) => lit.value,
-            Packet::Operator(op) => {
-                match op.header.type_id {
-                    0 => op.packets.iter().map(|p| p.eval()).sum(),
-                    1 => op.packets.iter().map(|p| p.eval()).product(),
-                    2 => op.packets.iter().map(|p| p.eval()).min().unwrap(),
-                    3 => op.packets.iter().map(|p| p.eval()).max().unwrap(),
-                    5 => (op.packets[0].eval() > op.packets[1].eval()) as u64,
-                    6 => (op.packets[0].eval() < op.packets[1].eval()) as u64,
-                    7 => (op.packets[0].eval() == op.packets[1].eval()) as u64,
-                    _ => panic!("Unexpected type {}", op.header.type_id)
-                }
-            }
+            Packet::Literal(lit) => lit.eval(),
+            Packet::Operator(op) => op.eval(),
         }
     }
 }
