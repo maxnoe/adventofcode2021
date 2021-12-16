@@ -84,6 +84,5 @@ pub fn day14() {
     let t0 = Instant::now();
     println!("Part1: {}", part1(&polymer_rules));
     println!("Part2: {}", part2(&polymer_rules));
-    part2(&polymer_rules);
     println!("Time: {} us", t0.elapsed().as_micros());
 }
