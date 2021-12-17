@@ -1,6 +1,6 @@
 use crate::input;
 use std::time::Instant;
-use std::cmp::{Ordering,max};
+use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 
 type Input = Vec<Vec<u8>>;
@@ -38,12 +38,44 @@ impl PartialOrd for State {
     }
 }
 
+fn tile_risk(risk: &Input, tile: usize) -> Input {
+    if tile == 1 {
+        return risk.clone();
+    }
+
+    let n_rows = risk.len();
+    let n_rows_tiled = n_rows * tile;
+    let n_cols = risk[0].len();
+    let n_cols_tiled = n_cols * tile;
+
+    let mut risk_tiled = vec![vec![0; n_cols_tiled]; n_rows_tiled];
+
+    for row in 0..n_rows_tiled {
+        let row_tile = (row / n_rows) as u8;
+
+        for col in 0..n_cols_tiled {
+            let col_tile = (col / n_cols) as u8;
+
+            let base_risk = risk[row % n_rows][col % n_cols];
+            let new_risk = base_risk + row_tile + col_tile;
+
+            risk_tiled[row][col] = if new_risk > 9 {
+                new_risk % 10 + 1
+            } else {
+                new_risk
+            };
+        }
+    }
+
+    risk_tiled
+}
+
 
 fn dijkstra(risk: &Input, tile: usize) -> u64 {
-    let n_rows_original = risk.len();
-    let n_rows = n_rows_original * tile;
-    let n_cols_original = risk[0].len();
-    let n_cols = n_cols_original * tile;
+    let risk = tile_risk(risk, tile);
+    println!("Grid size: {}x{}", risk.len(), risk[0].len());
+    let n_rows = risk.len();
+    let n_cols = risk[0].len();
 
     let mut dist = vec![vec![u64::MAX; n_cols]; n_rows];
 
@@ -69,12 +101,7 @@ fn dijkstra(risk: &Input, tile: usize) -> u64 {
 
             let neighbor_row = (row as i64 + drow as i64) as usize;
             let neighbor_col = (col as i64 + dcol as i64) as usize;
-
-            let row_tile = (neighbor_row / n_rows_original) as u64;
-            let col_tile = (neighbor_col / n_cols_original) as u64;
-
-            let original_cost = risk[neighbor_col % n_rows_original][neighbor_col % n_cols_original];
-            let neighbor_cost = max((original_cost as u64 + row_tile + col_tile) % 10, 1);
+            let neighbor_cost = risk[neighbor_col][neighbor_col] as u64;
 
             let next = State{
                 cost: cost + neighbor_cost,
@@ -92,7 +119,6 @@ fn dijkstra(risk: &Input, tile: usize) -> u64 {
 }
 
 
-
 fn part1(input: &Input) -> u64 {
     dijkstra(input, 1)
 }
@@ -104,7 +130,6 @@ fn part2(input: &Input) -> u64 {
 pub fn day15() {
     let input = input::get_input(15);
     let risk_levels = parse_input(&input);
-    println!("Grid size: {}x{}", risk_levels.len(), risk_levels[0].len());
 
     let t0 = Instant::now();
     println!("Part1: {}", part1(&risk_levels));
