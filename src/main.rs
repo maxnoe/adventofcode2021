@@ -27,6 +27,7 @@ fn main() {
         14 => aocmaxnoe2021::day14(),
         15 => aocmaxnoe2021::day15(),
         16 => aocmaxnoe2021::day16(),
+        17 => aocmaxnoe2021::day17(),
         _ => {
             println!("Day {} not yet implemented", day);
             std::process::exit(1);

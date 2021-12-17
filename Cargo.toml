@@ -1,6 +1,6 @@
 [package]
 name = "aoc2021"
-version = "0.16.1"
+version = "0.17.1"
 edition = "2021"
 
 [lib]
@@ -10,4 +10,6 @@ path = "src/lib.rs"
 [dependencies]
 reqwest = "0.9.18"
 itertools = "0.10.3"
+regex = "1"
+lazy_static = "1.4.0"
 phf = { version = "0.9", features = ["macros"] }
