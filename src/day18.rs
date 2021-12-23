@@ -141,18 +141,6 @@ impl Number {
 
     fn reduce(&mut self) {
         loop {
-            if self.arena.iter().any(|n| n.parent().map_or(false, |v| v >= self.arena.len())) {
-                panic!("Parent out of bounds {}", self.arena.len());
-            }
-
-            if self.arena.iter().any(|n| n.pair().map_or(false, |v| v.left >= self.arena.len())) {
-                panic!("Left out of bounds {}", self.arena.len());
-            }
-
-            if self.arena.iter().any(|n| n.pair().map_or(false, |v| v.right >= self.arena.len())) {
-                panic!("Right out of bounds {}", self.arena.len());
-            }
-
             if let Some(pos) = self.needs_exploding() {
                 self.explode(pos);
                 continue;
