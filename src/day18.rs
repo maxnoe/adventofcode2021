@@ -65,7 +65,7 @@ impl Node {
     }
 
     fn new_pair(parent: Option<usize>) -> Node {
-        Node::Pair(Pair{left: 0, right: 0, parent})
+        Node::Pair(Pair{left: usize::MAX, right: usize::MAX, parent})
     }
 
     fn new_literal(value: u8, parent: Option<usize>) -> Node {
@@ -175,19 +175,17 @@ impl Number {
     }
 
     fn explode(&mut self, pos: usize) {
-        let (left, right) = {
+        let children = {
             let node = self.arena[pos].pair().unwrap();
-            (node.left, node.right)
+            [node.left, node.right]
         };
 
-        let (left_neighbor, right_neighbor) = self.find_neighbors(pos);
+        let neighbors = self.find_neighbors(pos);
 
-        if let Some(next) = left_neighbor {
-            self.arena[next].literal_mut().unwrap().value += self.arena[left].literal().unwrap().value;
-        }
-
-        if let Some(next) = right_neighbor {
-            self.arena[next].literal_mut().unwrap().value += self.arena[right].literal().unwrap().value;
+        for (neighbor, child) in neighbors.iter().zip(children) {
+            if let Some(neighbor) = neighbor {
+                self.arena[*neighbor].literal_mut().unwrap().value += self.arena[child].literal().unwrap().value;
+            }
         }
 
         {
@@ -204,12 +202,13 @@ impl Number {
     fn remove_unused_literals(&mut self) {
         let mut i = 0;
         while i < self.arena.len() {
-            if let Some(lit) = self.arena[i].literal() {
-                if lit.parent.is_none() {
-                    self.remove_node(i);
-                    continue;
-                }
+
+            // a literal without parent is unreachable
+            if let Node::Literal(Literal{value:_, parent: None}) = self.arena[i] {
+                self.remove_node(i);
+                continue;
             }
+
             i += 1;
         }
     }
@@ -222,13 +221,14 @@ impl Number {
             return
         }
 
+        // update the parent attribute of the children
         if let Some(pair) = self.arena[last_pos].pair_mut() {
-            let left = pair.left;
-            let right = pair.right;
-            *self.arena[left].parent_mut() = Some(pos);
-            *self.arena[right].parent_mut() = Some(pos);
+            for child in [pair.left, pair.right] {
+                *self.arena[child].parent_mut() = Some(pos);
+            }
         }
 
+        // update our parents reference to ourself
         if let Some(parent) = self.arena[last_pos].parent() {
             if let Some(pair) = self.arena[parent].pair_mut() {
                 if pair.left == last_pos {
@@ -242,17 +242,17 @@ impl Number {
         self.arena.swap_remove(pos);
     }
 
-    fn find_neighbors(&self, pos: usize) -> (Option<usize>, Option<usize>) {
+    fn find_neighbors(&self, pos: usize) -> [Option<usize>; 2] {
         let parent = self.arena[self.arena[pos].parent().unwrap()].pair();
 
         if parent.is_none() {
-            return (None, None);
+            return [None, None];
         }
 
         let left = self.find_left_branch(pos).map_or(None, |p| Some(self.descent_right(p)));
         let right = self.find_right_branch(pos).map_or(None, |p| Some(self.descent_left(p)));
 
-        (left, right)
+        [left, right]
     }
 
     fn find_left_branch(&self, pos: usize) -> Option<usize> {
@@ -350,10 +350,9 @@ fn parse_number(line: &str) -> Result<Number, ()> {
                 number.arena.push(Node::new_literal(chr as u8 - b'0', node_index));
                 let index = number.arena.len() - 1;
 
-                let parent = number.arena.get_mut(node_index.unwrap()).unwrap();
-                let pair = parent.pair_mut().unwrap();
+                let pair = number.arena[node_index.unwrap()].pair_mut().unwrap();
                 match pair.left {
-                    0 => pair.left = index,
+                    usize::MAX => pair.left = index,
                     _ => pair.right = index,
                 };
             },
@@ -368,7 +367,7 @@ fn parse_number(line: &str) -> Result<Number, ()> {
                     Some(n) => {
                         let pair = n.pair_mut().unwrap();
                         match pair.left {
-                            0 => pair.left = node_index.unwrap(),
+                            usize::MAX => pair.left = node_index.unwrap(),
                             _ => pair.right = node_index.unwrap(),
                         }
                     }
@@ -399,18 +398,11 @@ fn part1(numbers: &Vec<Number>) -> u64 {
 
 
 fn part2(numbers: &Vec<Number>) -> u64 {
-    let mut max_mag = 0;
-    for n1 in numbers {
-        for n2 in numbers {
-            let result = n1.add(n2);
-            let mag = result.magnitude();
-            if mag > max_mag {
-                max_mag = mag;
-            }
-        }
-    }
-
-    max_mag
+    numbers
+        .iter()
+        .map(|n1| numbers.iter().map(|n2| n1.add(n2)).map(|n| n.magnitude()).max().unwrap_or(0))
+        .max()
+        .unwrap_or(0)
 }
 
 
